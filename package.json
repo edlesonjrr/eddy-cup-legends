@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/build.mjs",
-    "test": "node tests/draft.test.mjs"
+    "test": "node tests/draft.test.mjs",
+    "report:database": "node scripts/database-report.mjs"
   },
   "devDependencies": {
     "vite": "^6.1.0"

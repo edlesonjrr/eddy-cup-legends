@@ -19,4 +19,4 @@ Jogo web em HTML, CSS e JavaScript Vanilla. Abra `index.html` para jogar localme
 
 ## Testes
 
-Execute `npm test` para validar 500 sorteios estatísticos e 150 drafts completos nas três formações.
+Execute `npm test` para validar 5.000 sorteios estatísticos, equilíbrio de raridades, país/ano, compatibilidade e drafts completos nas três formações.

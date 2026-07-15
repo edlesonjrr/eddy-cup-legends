@@ -5,5 +5,8 @@ export const FORMATIONS = {'4-3-3':['GK','RB','CB','CB','LB','CM','CM','CAM','LW
 export const COORDS = [[50,88],[82,70],[62,73],[38,73],[18,70],[33,49],[67,49],[50,38],[18,20],[50,14],[82,20]];
 export const RARITIES = {common:{label:'Comum',min:50,max:79},rare:{label:'Raro',min:80,max:89},epic:{label:'Épico',min:90,max:97},legendary:{label:'Lendário',min:98,max:105}};
 export const RARITY_MODELS = [{weight:55,slots:['common','common','rare','epic']},{weight:25,slots:['common','rare','rare','epic']},{weight:15,slots:['common','rare','epic','legendary']},{weight:5,slots:['rare','epic','epic','legendary']}];
+export const POSITION_COMPATIBILITY = {GK:['GK'],CB:['CB'],RB:['RB','RWB'],LB:['LB','LWB'],CM:['CM','CAM','CDM'],CAM:['CAM','CM','CF'],CDM:['CDM','CM'],RM:['RM','RW'],LM:['LM','LW'],RW:['RW','RM'],LW:['LW','LM'],ST:['ST','CF'],CF:['CF','ST','CAM']};
+export const MAX_DRAW_ATTEMPTS = 40;
+export const RECENT_OFFER_ROUNDS = 3;
 export const positionLabel = code => POSITION_LABELS[code] || code;
 export const rarityOf = overall => overall >= 98 ? 'legendary' : overall >= 90 ? 'epic' : overall >= 80 ? 'rare' : 'common';
