@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { FORMATIONS, RARITY_MODELS, rarityOf } from '../assets/js/config.js';
+import { FORMATIONS, FORMATION_COORDS, RARITY_MODELS, rarityOf } from '../assets/js/config.js';
 import { drawRound, findBestAvailableSlot, selectCard, completeDraft, autoDraft, autoDraftByDifficulty } from '../assets/js/draft-engine.js';
 import { makePlayer } from '../assets/js/state.js';
 import { PLAYERS } from '../assets/js/players.js';
@@ -8,6 +8,7 @@ import { chemistry, legendaryCount, winProbabilities } from '../assets/js/compet
 
 const stats={rounds:0,mixedCountries:0,mixedYears:0,multipleLegends:0,fourEpics:0,fourSamePosition:0,blockedCards:0,roundsWithoutUsableCard:0,duplicates:0,rarities:{common:0,rare:0,epic:0,legendary:0}};
 assert.equal(MATCH_DURATION_MS,90000);assert.equal(EXTRA_TIME_MS,10000);stats.matchDuration=MATCH_DURATION_MS;
+assert.notDeepEqual(FORMATION_COORDS['4-3-3'],FORMATION_COORDS['4-4-2']);assert.notDeepEqual(FORMATION_COORDS['4-4-2'],FORMATION_COORDS['3-5-2']);assert.ok(PLAYERS.length>=405);stats.formationMaps=Object.keys(FORMATION_COORDS).length;
 for(let i=0;i<5000;i++){
   const p=makePlayer(`stat-${i}`);p.formation=Object.keys(FORMATIONS)[i%3];
   const round=drawRound(p);stats.rounds++;

@@ -34,10 +34,23 @@ const depth = [
  ['Argentina',2022,[['Armani','GK',78],['Foyth','RB',79],['Pezzella','CB',84],['Paredes','CDM',86],['Lautaro Martínez','ST',88]]],
  ['França',2018,[['Mandanda','GK',82],['Sidibé','RB',78],['Rami','CB',76],['Tolisso','CM',84],['Thauvin','RW',81],['Nabil Fekir','CF',87]]]
 ].flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall})));
-const countryCode = {'Brasil':'bra','Argentina':'arg','Alemanha':'ger','França':'fra','Itália':'ita','Espanha':'esp','Tchéquia':'cze','País de Gales':'wal','Inglaterra':'eng','Portugal':'por'};
+const modernSquads = [
+ ['Brasil',2006,[['Dida','GK',91],['Cafu','RB',94],['Lúcio','CB',94],['Juan','CB',88],['Roberto Carlos','LB',96],['Gilberto Silva','CDM',90],['Kaká','CAM',96],['Ronaldinho','LW',99],['Adriano','ST',94],['Ronaldo','ST',98],['Robinho','RW',88]]],
+ ['Brasil',2018,[['Alisson','GK',92],['Fagner','RB',82],['Thiago Silva','CB',94],['Miranda','CB',89],['Marcelo','LB',94],['Casemiro','CDM',94],['Paulinho','CM',87],['Coutinho','CAM',92],['Willian','RW',87],['Neymar','LW',97],['Gabriel Jesus','ST',87]]],
+ ['Argentina',2014,[['Sergio Romero','GK',89],['Zabaleta','RB',88],['Garay','CB',89],['Demichelis','CB',85],['Rojo','LB',86],['Mascherano','CDM',94],['Biglia','CM',85],['Di María','RW',94],['Messi','CF',102],['Higuaín','ST',92],['Agüero','ST',93]]],
+ ['Alemanha',2006,[['Lehmann','GK',91],['Friedrich','RB',85],['Mertesacker','CB',88],['Metzelder','CB',86],['Lahm','LB',94],['Frings','CDM',89],['Ballack','CM',96],['Schweinsteiger','LM',89],['Schneider','RM',87],['Klose','ST',96],['Podolski','ST',91]]],
+ ['França',2022,[['Lloris','GK',91],['Koundé','RB',88],['Varane','CB',93],['Upamecano','CB',89],['Theo Hernández','LB',92],['Tchouaméni','CDM',90],['Rabiot','CM',87],['Griezmann','CAM',95],['Dembélé','RW',90],['Mbappé','LW',101],['Giroud','ST',92]]],
+ ['Croácia',2018,[['Subašić','GK',90],['Vrsaljko','RB',87],['Lovren','CB',88],['Vida','CB',86],['Strinić','LB',81],['Brozović','CDM',90],['Rakitić','CM',94],['Modrić','CAM',99],['Rebić','RW',87],['Perišić','LW',92],['Mandžukić','ST',92]]],
+ ['Bélgica',2018,[['Courtois','GK',95],['Alderweireld','CB',90],['Kompany','CB',92],['Vertonghen','CB',89],['Meunier','RM',86],['Witsel','CDM',88],['De Bruyne','CAM',98],['Carrasco','LM',87],['Hazard','LW',97],['Mertens','CF',91],['Lukaku','ST',94]]],
+ ['Portugal',2022,[['Diogo Costa','GK',88],['João Cancelo','RB',92],['Rúben Dias','CB',94],['Pepe','CB',91],['Raphaël Guerreiro','LB',88],['Palhinha','CDM',88],['Bruno Fernandes','CAM',95],['Bernardo Silva','RW',94],['João Félix','CF',89],['Rafael Leão','LW',92],['Cristiano Ronaldo','ST',99]]],
+ ['Inglaterra',2022,[['Pickford','GK',89],['Walker','RB',91],['Stones','CB',90],['Maguire','CB',86],['Shaw','LB',88],['Rice','CDM',91],['Bellingham','CM',94],['Foden','CAM',93],['Saka','RW',94],['Rashford','LW',91],['Kane','ST',97]]],
+ ['Holanda',2022,[['Noppert','GK',85],['Dumfries','RB',91],['Van Dijk','CB',96],['De Ligt','CB',91],['Aké','LB',89],['De Jong','CM',94],['Koopmeiners','CM',87],['Gakpo','LW',91],['Bergwijn','RW',87],['Depay','CF',91],['Weghorst','ST',85]]]
+];
+const modernPlayers=modernSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall})));
+const countryCode = {'Brasil':'bra','Argentina':'arg','Alemanha':'ger','França':'fra','Itália':'ita','Espanha':'esp','Tchéquia':'cze','País de Gales':'wal','Inglaterra':'eng','Portugal':'por','Croácia':'cro','Bélgica':'bel','Holanda':'ned'};
 const slug = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const allSquads=[...squads,...additionalSquads];
-const rawPlayers=[...allSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...depth];
+const rawPlayers=[...allSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...depth,...modernPlayers];
 const baseIds=rawPlayers.map(player=>`${countryCode[player.country]||slug(player.country).slice(0,3)}-${player.year}-${slug(player.name)}`);
 export const PLAYERS = rawPlayers.map((player,index)=>({id:baseIds.filter(id=>id===baseIds[index]).length>1?`${baseIds[index]}-${player.position.toLowerCase()}`:baseIds[index],...player}));
-export const TOURNAMENTS = allSquads.map(([country,year])=>({country,year}));
+export const TOURNAMENTS = [...allSquads.map(([country,year])=>({country,year})),...modernSquads.map(([country,year])=>({country,year}))];

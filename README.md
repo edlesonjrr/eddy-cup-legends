@@ -19,6 +19,8 @@ Jogo web em HTML, CSS e JavaScript Vanilla. Abra `index.html` para jogar localme
 - Estratégias pré-jogo, decisão rápida durante a partida, revanche e formato opcional de melhor de três
 - Dificuldades Fácil, Médio, Difícil e Lendário no Solo, com adversários progressivamente mais fortes
 - Disputa de pênaltis interativa com ordem dos cobradores, escolha de canto e influência do overall do goleiro
+- Mapas próprios para 4-3-3, 4-4-2 e 3-5-2, tutorial em slides e placar separado de pênaltis
+- Banco ampliado para 415 jogadores reais, com 110 nomes conhecidos adicionados de Copas modernas
 - Prorrogação e disputa de pênaltis em empates, com estado compartilhado no modo Online
 
 ## Executar localmente
