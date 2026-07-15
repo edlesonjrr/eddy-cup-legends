@@ -7,6 +7,7 @@ const supabase=configured?createClient(url,key,{auth:{persistSession:false}}):nu
 const endpoint=configured?`${url}/functions/v1/online-rooms`:'';
 let activeToken='';
 let activeChannel=null;
+let activeRoomCode='';
 
 const fail=message=>{throw new Error(message)};
 const announce=code=>{if(!supabase)return;const channel=supabase.channel(`eddy-room-${code}`);channel.subscribe(status=>{if(status==='SUBSCRIBED'){channel.send({type:'broadcast',event:'changed',payload:{at:Date.now()}}).finally(()=>setTimeout(()=>supabase.removeChannel(channel),250))}})};
@@ -26,6 +27,7 @@ export async function onlineRoomRequest(path,options={}){
   const data=await request(path,options);
   if(data.token){
     activeToken=data.token;
+    activeRoomCode=data.code;
     try{sessionStorage.setItem(`eddy-room-${data.code}`,data.token)}catch{}
     if(data.role==='guest')announce(data.code);
   }
@@ -37,6 +39,7 @@ export async function onlineRoomRequest(path,options={}){
 
 export function watchOnlineRoom(code,onChange){
   if(!supabase)return()=>{};
+  activeRoomCode=code;
   if(!activeToken){try{activeToken=sessionStorage.getItem(`eddy-room-${code}`)||''}catch{}}
   const channel=supabase.channel(`eddy-room-${code}`)
     .on('broadcast',{event:'changed'},onChange)
@@ -44,3 +47,12 @@ export function watchOnlineRoom(code,onChange){
   activeChannel=channel;
   return()=>{if(activeChannel===channel)activeChannel=null;supabase.removeChannel(channel)};
 }
+
+export function leaveOnlineRoom(code){
+  if(!configured||!activeToken||!code)return;
+  request(`/api/rooms/${code}/leave`,{method:'PUT',body:'{}',keepalive:true}).catch(()=>{});
+}
+
+addEventListener('beforeunload',()=>{
+  if(activeRoomCode)leaveOnlineRoom(activeRoomCode);
+});

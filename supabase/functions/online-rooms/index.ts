@@ -45,7 +45,7 @@ Deno.serve(async req=>{
     if(!role)return json({error:"Acesso negado à sala."},403);
 
     if(req.method==="PUT"&&parts[3]==="state"){
-      const body=cleanState(await req.json()),field=role==="host"?"host_state":"guest_state",{error}=await db.from("rooms").update({[field]:body,updated_at:now.toISOString()}).eq("code",code);
+      const body=cleanState(await req.json()),field=role==="host"?"host_state":"guest_state",leftField=role==="host"?"host_left":"guest_left",{error}=await db.from("rooms").update({[field]:body,[leftField]:false,updated_at:now.toISOString()}).eq("code",code);
       if(error)throw error;return json({ok:true});
     }
     if(req.method==="PUT"&&parts[3]==="match"){
@@ -56,6 +56,16 @@ Deno.serve(async req=>{
     if(req.method==="PUT"&&parts[3]==="decision"){
       const body=await req.json(),field=role==="host"?"host_decision":"guest_decision",{error}=await db.from("rooms").update({[field]:body,updated_at:now.toISOString()}).eq("code",code);
       if(error)throw error;return json({ok:true});
+    }
+    if(req.method==="PUT"&&parts[3]==="leave"){
+      const field=role==="host"?"host_left":"guest_left",{data,error}=await db.from("rooms").update({[field]:true,updated_at:now.toISOString()}).eq("code",code).select("status,host_left,guest_left").single();
+      if(error)throw error;
+      if(data.status==="finished"&&data.host_left&&data.guest_left){
+        const {error:deleteError}=await db.from("rooms").delete().eq("code",code);
+        if(deleteError)throw deleteError;
+        return json({ok:true,deleted:true});
+      }
+      return json({ok:true,deleted:false});
     }
     if(req.method==="GET"&&parts.length===3){
       const deadline=room.deadline?new Date(room.deadline).getTime():0,reveal=Boolean(room.host_state?.finished&&room.guest_state?.finished)||Boolean(deadline&&deadline<=Date.now()),publicState=(state:any)=>reveal?state:{formation:state?.formation||null,progress:state?.progress||0,finished:Boolean(state?.finished)};

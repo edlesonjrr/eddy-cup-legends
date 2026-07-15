@@ -1,5 +1,7 @@
 # Eddy Cup Legends
 
+[![Production Pipeline](https://github.com/edlesonjrr/eddy-cup-legends/actions/workflows/production.yml/badge.svg)](https://github.com/edlesonjrr/eddy-cup-legends/actions/workflows/production.yml)
+
 Um game de draft inspirado na história das Copas do Mundo, desenvolvido com HTML, CSS e JavaScript. Monte uma seleção histórica, combine química, capitão, treinador e lendas, e acompanhe a partida em uma simulação interativa.
 
 ## Destaques
@@ -23,6 +25,10 @@ Um game de draft inspirado na história das Copas do Mundo, desenvolvido com HTM
 - JavaScript ES Modules
 - Vite
 - Supabase gratuito para salas, sincronização e partidas Online
+
+## Pipeline de produção
+
+Cada envio para a branch `main` passa automaticamente por seis etapas: instalação das dependências, testes, build, auditoria de segurança, publicação na Vercel e verificação do site em produção.
 
 ## Executar localmente
 

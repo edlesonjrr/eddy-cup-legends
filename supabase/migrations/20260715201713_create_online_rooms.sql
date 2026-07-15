@@ -7,6 +7,8 @@ create table public.rooms (
   match_state jsonb not null default '{}'::jsonb,
   host_decision jsonb not null default '{}'::jsonb,
   guest_decision jsonb not null default '{}'::jsonb,
+  host_left boolean not null default false,
+  guest_left boolean not null default false,
   status text not null default 'waiting' check (status in ('waiting','drafting','playing','finished')),
   deadline timestamptz,
   created_at timestamptz not null default now(),
