@@ -3,9 +3,10 @@ import { FORMATIONS, RARITY_MODELS, rarityOf } from '../assets/js/config.js';
 import { drawRound, findBestAvailableSlot, selectCard, completeDraft, autoDraft } from '../assets/js/draft-engine.js';
 import { makePlayer } from '../assets/js/state.js';
 import { PLAYERS } from '../assets/js/players.js';
-import { runMatch } from '../assets/js/simulator.js';
+import { EXTRA_TIME_MS, MATCH_DURATION_MS, runMatch } from '../assets/js/simulator.js';
 
 const stats={rounds:0,mixedCountries:0,mixedYears:0,multipleLegends:0,fourEpics:0,fourSamePosition:0,blockedCards:0,roundsWithoutUsableCard:0,duplicates:0,rarities:{common:0,rare:0,epic:0,legendary:0}};
+assert.equal(MATCH_DURATION_MS,90000);assert.equal(EXTRA_TIME_MS,10000);stats.matchDuration=MATCH_DURATION_MS;
 for(let i=0;i<5000;i++){
   const p=makePlayer(`stat-${i}`);p.formation=Object.keys(FORMATIONS)[i%3];
   const round=drawRound(p);stats.rounds++;

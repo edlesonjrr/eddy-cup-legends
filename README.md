@@ -13,7 +13,8 @@ Jogo web em HTML, CSS e JavaScript Vanilla. Abra `index.html` para jogar localme
 - Proteção contra repetição consecutiva de países e duplicação da mesma pessoa em uma Copa
 - Modo Online com sala de seis caracteres, dois jogadores, estado persistente e cronômetro compartilhado de 2 minutos
 - Modo de conclusão que oferece somente cartas compatíveis nas duas últimas vagas
-- Simulação ao vivo de 25 segundos com logs, momentum, estatísticas, pênaltis interativos e decisão tática no intervalo
+- Cronômetro de 2 minutos para montar a equipe nos modos Solo, multiplayer local e Online
+- Simulação ao vivo de 90 segundos com campo animado, logs em tempo real, momentum, estatísticas, pênaltis interativos e decisão tática no intervalo
 - Prorrogação e disputa de pênaltis em empates, com estado compartilhado no modo Online
 
 ## Executar localmente
