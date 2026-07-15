@@ -22,7 +22,7 @@ Um game de draft inspirado na história das Copas do Mundo, desenvolvido com HTM
 - CSS3
 - JavaScript ES Modules
 - Vite
-- Cloudflare D1/Worker para as salas online na configuração original
+- Supabase gratuito para salas, sincronização e partidas Online
 
 ## Executar localmente
 
@@ -43,6 +43,12 @@ npm run build
 
 Os arquivos finais serão gerados na pasta `dist`.
 
+## Configurar o modo Online
+
+Copie `.env.example` para `.env.local` e informe a URL e a chave publicável do seu projeto Supabase. A chave publicável pode ficar no frontend; nenhuma chave administrativa é incluída no site.
+
+O backend das salas está em `supabase/functions/online-rooms` e o esquema versionado em `supabase/migrations`. As salas usam códigos temporários, aceitam exatamente dois jogadores e expiram após quatro horas.
+
 ## Testes
 
 ```bash
@@ -50,10 +56,6 @@ npm test
 ```
 
 A suíte valida 5.000 rodadas de draft, distribuição de raridades, compatibilidade de posições, proteção contra duplicações, formações, duração da partida e equilíbrio das dificuldades.
-
-## Observação sobre o modo Online
-
-As salas online utilizam persistência D1/Worker na configuração original do projeto. Em outra plataforma de hospedagem, essa camada precisa ser adaptada ou conectada a um serviço de banco compatível.
 
 ## Autor
 
