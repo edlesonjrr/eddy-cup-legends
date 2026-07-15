@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { FORMATIONS, RARITY_MODELS, rarityOf } from '../assets/js/config.js';
-import { drawRound, findBestAvailableSlot, selectCard, completeDraft, autoDraft } from '../assets/js/draft-engine.js';
+import { drawRound, findBestAvailableSlot, selectCard, completeDraft, autoDraft, autoDraftByDifficulty } from '../assets/js/draft-engine.js';
 import { makePlayer } from '../assets/js/state.js';
 import { PLAYERS } from '../assets/js/players.js';
 import { EXTRA_TIME_MS, MATCH_DURATION_MS, runMatch } from '../assets/js/simulator.js';
@@ -36,4 +36,5 @@ stats.consecutiveCountryRepeats=consecutiveCountryRepeats;stats.totalPlayers=PLA
 stats.endgameChecks=endgameChecks;
 const simulationTeamA=autoDraft('4-3-3'),simulationTeamB=autoDraft('4-4-2'),simulation=await runMatch({home:simulationTeamA,away:simulationTeamB,seed:'test-match',durationMs:120,extraTimeMs:80,onDecision:async event=>({value:event.type==='tactic'?'balanced':'center',batterId:event.candidates?.[0]?.id})});assert.equal(simulation.finished,true);assert.ok(simulation.logs.length>=3);assert.ok(simulation.stats.home.possession+simulation.stats.away.possession===100);stats.simulationFinished=simulation.finished;
 const competitiveHome={team:simulationTeamA,coach:'Scaloni',captainId:simulationTeamA[0].id,strategy:'attack'},competitiveAway={team:simulationTeamB,coach:'Felipão',captainId:simulationTeamB[0].id,strategy:'balanced'},odds=winProbabilities(competitiveHome,competitiveAway);assert.ok(chemistry(simulationTeamA)>=0&&chemistry(simulationTeamA)<=100);assert.ok(legendaryCount(simulationTeamA)>=0);assert.equal(odds.home+odds.away,100);stats.competitiveOdds=odds;
+const difficultyAverages={};for(const level of ['easy','medium','hard','legendary']){const teams=Array.from({length:40},()=>autoDraftByDifficulty('4-3-3',level)),cards=teams.flat();difficultyAverages[level]=cards.reduce((sum,card)=>sum+card.overall,0)/cards.length}assert.ok(difficultyAverages.easy<difficultyAverages.medium&&difficultyAverages.medium<difficultyAverages.hard&&difficultyAverages.hard<difficultyAverages.legendary);stats.difficultyAverages=difficultyAverages;
 console.log(JSON.stringify(stats,null,2));
