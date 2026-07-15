@@ -1,3 +1,5 @@
+import { WORLD_CUP_2026_PLAYERS } from './players-2026.js';
+
 const squads = [
  ['Brasil',1970,[['Félix','GK',84],['Carlos Alberto','RB',100],['Brito','CB',78],['Everaldo','LB',76],['Clodoaldo','CM',89],['Gérson','CAM',96],['Jairzinho','RW',100],['Pelé','ST',105],['Tostão','CF',95],['Rivelino','LW',96],['Piazza','CB',82]]],
  ['Argentina',1986,[['Nery Pumpido','GK',84],['Cuciuffo','RB',76],['José Brown','CB',85],['Olarticoechea','LB',82],['Batista','CDM',79],['Burruchaga','CM',91],['Maradona','CAM',104],['Valdano','ST',93],['Claudio Borghi','CF',78],['Giusti','RM',80],['Ruggeri','CB',90]]],
@@ -50,7 +52,8 @@ const modernPlayers=modernSquads.flatMap(([country,year,list])=>list.map(([name,
 const countryCode = {'Brasil':'bra','Argentina':'arg','Alemanha':'ger','França':'fra','Itália':'ita','Espanha':'esp','Tchéquia':'cze','País de Gales':'wal','Inglaterra':'eng','Portugal':'por','Croácia':'cro','Bélgica':'bel','Holanda':'ned'};
 const slug = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const allSquads=[...squads,...additionalSquads];
-const rawPlayers=[...allSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...depth,...modernPlayers];
+const rawPlayers=[...allSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...depth,...modernPlayers,...WORLD_CUP_2026_PLAYERS];
 const baseIds=rawPlayers.map(player=>`${countryCode[player.country]||slug(player.country).slice(0,3)}-${player.year}-${slug(player.name)}`);
-export const PLAYERS = rawPlayers.map((player,index)=>({id:baseIds.filter(id=>id===baseIds[index]).length>1?`${baseIds[index]}-${player.position.toLowerCase()}`:baseIds[index],...player}));
-export const TOURNAMENTS = [...allSquads.map(([country,year])=>({country,year})),...modernSquads.map(([country,year])=>({country,year}))];
+const idOccurrences=new Map();
+export const PLAYERS = rawPlayers.map((player,index)=>{const base=baseIds.filter(id=>id===baseIds[index]).length>1?`${baseIds[index]}-${player.position.toLowerCase()}`:baseIds[index],occurrence=(idOccurrences.get(base)||0)+1;idOccurrences.set(base,occurrence);return{id:occurrence>1?`${base}-${occurrence}`:base,...player}});
+export const TOURNAMENTS = [...allSquads.map(([country,year])=>({country,year})),...modernSquads.map(([country,year])=>({country,year})),...[...new Set(WORLD_CUP_2026_PLAYERS.map(player=>player.country))].map(country=>({country,year:2026}))];
