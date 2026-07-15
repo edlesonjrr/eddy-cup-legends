@@ -1,7 +1,7 @@
 const squads = [
  ['Brasil',1970,[['Félix','GK',84],['Carlos Alberto','RB',100],['Brito','CB',78],['Everaldo','LB',76],['Clodoaldo','CM',89],['Gérson','CAM',96],['Jairzinho','RW',100],['Pelé','ST',105],['Tostão','CF',95],['Rivelino','LW',96],['Piazza','CB',82]]],
  ['Argentina',1986,[['Nery Pumpido','GK',84],['Cuciuffo','RB',76],['José Brown','CB',85],['Olarticoechea','LB',82],['Batista','CDM',79],['Burruchaga','CM',91],['Maradona','CAM',104],['Valdano','ST',93],['Claudio Borghi','CF',78],['Giusti','RM',80],['Ruggeri','CB',90]]],
- ['Alemanha',1990,[['Bodo Illgner','GK',87],['Thomas Berthold','RB',82],['Kohler','CB',92],['Brehme','LB',96],['Buchwald','CB',86],['Hässler','RM',84],['Matthäus','CM',101],['Littbarski','LM',90],['Völler','ST',94],['Klinsmann','ST',95],['Reuter','CM',78]]],
+ ['Alemanha',1990,[['Bodo Illgner','GK',87],['Thomas Berthold','RB',82],['Kohler','CB',92],['Brehme','LB',96],['Buchwald','CB',86],['Hässler','RM',84],['Matthäus','CM',101],['Littbarski','LM',90],['Völler','ST',94],['Klinsmann','ST',95],['Olaf Thon','CM',82]]],
  ['Brasil',1994,[['Taffarel','GK',91],['Jorginho','RB',89],['Aldair','CB',92],['Branco','LB',87],['Márcio Santos','CB',85],['Dunga','CDM',91],['Mazinho','CM',84],['Zinho','LM',82],['Bebeto','CF',94],['Romário','ST',101],['Viola','ST',75]]],
  ['França',1998,[['Barthez','GK',91],['Thuram','RB',96],['Desailly','CB',95],['Blanc','CB',92],['Lizarazu','LB',90],['Deschamps','CDM',89],['Petit','CM',90],['Zidane','CAM',103],['Djorkaeff','CF',90],['Henry','ST',88],['Dugarry','ST',78]]],
  ['Brasil',2002,[['Marcos','GK',92],['Cafu','RB',101],['Lúcio','CB',94],['Edmílson','CB',89],['Roberto Carlos','LB',101],['Gilberto Silva','CDM',88],['Kléberson','CM',82],['Ronaldinho','CAM',102],['Rivaldo','LW',99],['Ronaldo','ST',104],['Denílson','RW',86]]],
@@ -11,10 +11,16 @@ const squads = [
  ['Argentina',2022,[['Emiliano Martínez','GK',92],['Molina','RB',86],['Otamendi','CB',91],['Romero','CB',90],['Tagliafico','LB',84],['De Paul','CM',90],['Enzo Fernández','CM',91],['Mac Allister','CAM',89],['Di María','RW',96],['Messi','CF',104],['Julián Álvarez','ST',93]]],
  ['França',2018,[['Lloris','GK',92],['Pavard','RB',86],['Varane','CB',94],['Umtiti','CB',90],['Hernández','LB',87],['Kanté','CDM',96],['Pogba','CM',94],['Griezmann','CAM',97],['Mbappé','RW',98],['Giroud','ST',89],['Dembélé','LW',82]]]
 ];
-const extras = [
- ['Robert Pirès','França',1998,'LM',91],['Ángel Di María','Argentina',2022,'LM',96],['Pavel Nedvěd','Tchéquia',2006,'LM',95],['Ryan Giggs','País de Gales',1998,'LM',94],
- ['David Beckham','Inglaterra',2002,'RM',96],['Luís Figo','Portugal',2006,'RM',99],['Thomas Müller','Alemanha',2014,'RM',96],['Pierre Littbarski','Alemanha',1990,'RM',90]
-].map(([name,country,year,position,overall])=>({name,country,year,position,overall}));
+const additionalSquads = [
+ ['Uruguai',1950,[['Roque Máspoli','GK',96],['Aníbal Paz','GK',78],['Juan Carlos González','CB',84],['Eusebio Tejera','CB',88],['Schubert Gambetta','CB',87],['Matías González','CB',82],['Víctor Rodríguez Andrade','LB',91],['Obdulio Varela','CDM',98],['Julio Pérez','CM',91],['Juan Burgueño','CM',78],['Juan Schiaffino','CAM',99],['Alcides Ghiggia','RW',98],['Óscar Míguez','ST',94],['Rubén Morán','LW',82],['Carlos Romero','RW',79],['Ernesto Vidal','ST',80]]],
+ ['Inglaterra',1966,[['Gordon Banks','GK',101],['Peter Bonetti','GK',82],['George Cohen','RB',92],['Ray Wilson','LB',91],['Jack Charlton','CB',95],['Bobby Moore','CB',101],['Nobby Stiles','CDM',92],['Alan Ball','RM',94],['Martin Peters','LM',95],['Bobby Charlton','CAM',102],['Geoff Hurst','ST',98],['Roger Hunt','ST',93],['Jimmy Greaves','ST',94],['Gerry Byrne','LB',79],['George Eastham','CM',82],['Terry Paine','RW',84]]],
+ ['Holanda',1974,[['Jan Jongbloed','GK',88],['Piet Schrijvers','GK',79],['Wim Suurbier','RB',91],['Wim Rijsbergen','CB',89],['Arie Haan','CB',94],['Ruud Krol','LB',98],['Wim Jansen','RM',90],['Johan Neeskens','CM',99],['Wim van Hanegem','CM',97],['Johan Cruyff','CF',104],['Johnny Rep','RW',94],['Rob Rensenbrink','LW',96],['Piet Keizer','LW',88],['Theo de Jong','CM',82],['Pleun Strik','CB',78],['Ruud Geels','ST',86]]],
+ ['Itália',1982,[['Dino Zoff','GK',100],['Ivano Bordon','GK',81],['Claudio Gentile','RB',96],['Antonio Cabrini','LB',96],['Gaetano Scirea','CB',100],['Fulvio Collovati','CB',92],['Giuseppe Bergomi','CB',91],['Gabriele Oriali','CDM',90],['Marco Tardelli','CM',97],['Giancarlo Antognoni','CAM',94],['Bruno Conti','RW',97],['Paolo Rossi','ST',101],['Francesco Graziani','ST',89],['Franco Causio','RM',88],['Giuseppe Dossena','CM',84],['Alessandro Altobelli','ST',90]]],
+ ['Portugal',1966,[['José Pereira','GK',88],['José Henrique','GK',78],['Festa','RB',82],['Hilário','LB',90],['Vicente','CB',86],['Morais','CB',89],['Mário Coluna','CM',99],['Jaime Graça','CM',90],['António Simões','LW',94],['José Augusto','RW',95],['Eusébio','ST',103],['José Torres','ST',96],['Baptista','CDM',80],['Fernando Peres','LM',82],['Cavém','LB',84],['João Lourenço','ST',79]]],
+ ['Croácia',2018,[['Danijel Subašić','GK',93],['Dominik Livaković','GK',82],['Šime Vrsaljko','RB',90],['Dejan Lovren','CB',91],['Domagoj Vida','CB',90],['Ivan Strinić','LB',84],['Luka Modrić','CM',98],['Ivan Rakitić','CM',96],['Marcelo Brozović','CDM',92],['Ivan Perišić','LW',94],['Ante Rebić','RW',88],['Mario Mandžukić','ST',94],['Mateo Kovačić','CM',89],['Andrej Kramarić','CF',87],['Marko Pjaca','RW',79],['Tin Jedvaj','CB',78]]],
+ ['Bélgica',2018,[['Thibaut Courtois','GK',96],['Simon Mignolet','GK',84],['Toby Alderweireld','CB',93],['Vincent Kompany','CB',95],['Jan Vertonghen','CB',93],['Thomas Meunier','RB',89],['Mousa Dembélé','CM',90],['Axel Witsel','CDM',89],['Kevin De Bruyne','CAM',98],['Eden Hazard','LW',98],['Dries Mertens','RW',92],['Romelu Lukaku','ST',95],['Marouane Fellaini','CM',88],['Yannick Carrasco','LM',87],['Youri Tielemans','CM',84],['Michy Batshuayi','ST',83]]],
+ ['Japão',2022,[['Shūichi Gonda','GK',88],['Eiji Kawashima','GK',80],['Takehiro Tomiyasu','CB',90],['Maya Yoshida','CB',88],['Kō Itakura','CB',86],['Yūto Nagatomo','LB',87],['Wataru Endō','CDM',90],['Hidemasa Morita','CM',86],['Daichi Kamada','CAM',89],['Ritsu Dōan','RW',90],['Kaoru Mitoma','LW',91],['Junya Itō','RW',88],['Takuma Asano','ST',86],['Daizen Maeda','ST',87],['Takumi Minamino','LM',88],['Takefusa Kubo','RM',86]]]
+];
 const depth = [
  ['Brasil',1970,[['Ado','GK',72],['Marco Antônio','LB',74],['Joel Camargo','CB',76],['Edu','LW',81],['Roberto Miranda','ST',82]]],
  ['Argentina',1986,[['Luis Islas','GK',73],['Oscar Garré','LB',77],['Julio Olarticoechea','LM',78],['Ricardo Bochini','CAM',85],['Pedro Pasculli','ST',83]]],
@@ -30,7 +36,8 @@ const depth = [
 ].flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall})));
 const countryCode = {'Brasil':'bra','Argentina':'arg','Alemanha':'ger','França':'fra','Itália':'ita','Espanha':'esp','Tchéquia':'cze','País de Gales':'wal','Inglaterra':'eng','Portugal':'por'};
 const slug = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-const rawPlayers=[...squads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...extras,...depth];
+const allSquads=[...squads,...additionalSquads];
+const rawPlayers=[...allSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...depth];
 const baseIds=rawPlayers.map(player=>`${countryCode[player.country]||slug(player.country).slice(0,3)}-${player.year}-${slug(player.name)}`);
 export const PLAYERS = rawPlayers.map((player,index)=>({id:baseIds.filter(id=>id===baseIds[index]).length>1?`${baseIds[index]}-${player.position.toLowerCase()}`:baseIds[index],...player}));
-export const TOURNAMENTS = squads.map(([country,year])=>({country,year}));
+export const TOURNAMENTS = allSquads.map(([country,year])=>({country,year}));

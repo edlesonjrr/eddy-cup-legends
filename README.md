@@ -9,6 +9,8 @@ Jogo web em HTML, CSS e JavaScript Vanilla. Abra `index.html` para jogar localme
 - Draft equilibrado de 11 rodadas com posições variadas, raridades probabilísticas e três rerolls por jogador
 - Escolha de treinador, sorteio de árbitro e simulação da partida
 - Interface responsiva, acessível e sem imagens reais de atletas
+- Banco local com 305 versões reais de jogadores, distribuídas por 19 seleções históricas de Copa
+- Proteção contra repetição consecutiva de países e duplicação da mesma pessoa em uma Copa
 
 ## Executar localmente
 
