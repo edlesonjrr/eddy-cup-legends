@@ -3,6 +3,7 @@ import { FORMATIONS, RARITY_MODELS, rarityOf } from '../assets/js/config.js';
 import { drawRound, findBestAvailableSlot, selectCard, completeDraft, autoDraft } from '../assets/js/draft-engine.js';
 import { makePlayer } from '../assets/js/state.js';
 import { PLAYERS } from '../assets/js/players.js';
+import { runMatch } from '../assets/js/simulator.js';
 
 const stats={rounds:0,mixedCountries:0,mixedYears:0,multipleLegends:0,fourEpics:0,fourSamePosition:0,blockedCards:0,roundsWithoutUsableCard:0,duplicates:0,rarities:{common:0,rare:0,epic:0,legendary:0}};
 for(let i=0;i<5000;i++){
@@ -31,4 +32,5 @@ const varietyPlayer=makePlayer('variety');varietyPlayer.formation='4-3-3';let pr
 let endgameChecks=0;for(const [formation,slots] of Object.entries(FORMATIONS))for(let emptyIndex=0;emptyIndex<slots.length;emptyIndex++){const p=makePlayer(`endgame-${formation}-${emptyIndex}`);p.formation=formation;p.lineup=p.lineup.map((_,index)=>index===emptyIndex?null:{id:`dummy-${index}`,name:'Preenchido',country:'Teste',year:2000,position:slots[index],overall:70});p.currentRound=10;const round=drawRound(p);assert.ok(round.cards.length>=1&&round.cards.length<=4);assert.ok(round.cards.every(card=>findBestAvailableSlot(card,p)>=0),'carta bloqueada no modo de conclusão');completeDraft(p);assert.equal(p.lineup.filter(Boolean).length,11);endgameChecks++}
 stats.consecutiveCountryRepeats=consecutiveCountryRepeats;stats.totalPlayers=PLAYERS.length;
 stats.endgameChecks=endgameChecks;
+const simulationTeamA=autoDraft('4-3-3'),simulationTeamB=autoDraft('4-4-2'),simulation=await runMatch({home:simulationTeamA,away:simulationTeamB,seed:'test-match',durationMs:120,extraTimeMs:80,onDecision:async event=>({value:event.type==='tactic'?'balanced':'center',batterId:event.candidates?.[0]?.id})});assert.equal(simulation.finished,true);assert.ok(simulation.logs.length>=3);assert.ok(simulation.stats.home.possession+simulation.stats.away.possession===100);stats.simulationFinished=simulation.finished;
 console.log(JSON.stringify(stats,null,2));
