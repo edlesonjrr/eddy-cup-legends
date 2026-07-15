@@ -9,6 +9,7 @@ let activeToken='';
 let activeChannel=null;
 
 const fail=message=>{throw new Error(message)};
+const announce=code=>{if(!supabase)return;const channel=supabase.channel(`eddy-room-${code}`);channel.subscribe(status=>{if(status==='SUBSCRIBED'){channel.send({type:'broadcast',event:'changed',payload:{at:Date.now()}}).finally(()=>setTimeout(()=>supabase.removeChannel(channel),250))}})};
 
 async function request(path,options={}){
   if(!configured)fail('Modo Online ainda não foi configurado.');
@@ -26,6 +27,7 @@ export async function onlineRoomRequest(path,options={}){
   if(data.token){
     activeToken=data.token;
     try{sessionStorage.setItem(`eddy-room-${data.code}`,data.token)}catch{}
+    if(data.role==='guest')announce(data.code);
   }
   if((options.method||'GET').toUpperCase()!=='GET'&&!data.token&&activeChannel){
     activeChannel.send({type:'broadcast',event:'changed',payload:{at:Date.now()}}).catch(()=>{});
