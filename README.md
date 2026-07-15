@@ -1,35 +1,60 @@
-# World Cup Legends Draft
+# Eddy Cup Legends
 
-Jogo web em HTML, CSS e JavaScript Vanilla. Abra `index.html` para jogar localmente.
+Um game de draft inspirado na história das Copas do Mundo, desenvolvido com HTML, CSS e JavaScript. Monte uma seleção histórica, combine química, capitão, treinador e lendas, e acompanhe a partida em uma simulação interativa.
 
-## Incluído nesta versão
+## Destaques
 
-- Modos solo e multiplayer local
-- Formações 4-3-3, 4-4-2 e 3-5-2
-- Draft equilibrado de 11 rodadas com posições variadas, raridades probabilísticas e três rerolls por jogador
-- Escolha de treinador, sorteio de árbitro e simulação da partida
-- Interface responsiva, acessível e sem imagens reais de atletas
-- Banco local com 305 versões reais de jogadores, distribuídas por 19 seleções históricas de Copa
-- Proteção contra repetição consecutiva de países e duplicação da mesma pessoa em uma Copa
-- Modo Online com sala de seis caracteres, dois jogadores, estado persistente e cronômetro compartilhado de 2 minutos
-- Modo de conclusão que oferece somente cartas compatíveis nas duas últimas vagas
-- Cronômetro de 2 minutos para montar a equipe nos modos Solo, multiplayer local e Online
-- Simulação ao vivo de 90 segundos com campo animado, logs em tempo real, momentum, estatísticas, pênaltis interativos e decisão tática no intervalo
-- Camada competitiva com capitão, química 0–100, bônus de +2% por lenda, índice histórico dos treinadores e probabilidade de vitória dos dois lados
-- Estratégias pré-jogo, decisão rápida durante a partida, revanche e formato opcional de melhor de três
-- Dificuldades Fácil, Médio, Difícil e Lendário no Solo, com adversários progressivamente mais fortes
-- Disputa de pênaltis interativa com ordem dos cobradores, escolha de canto e influência do overall do goleiro
-- Mapas próprios para 4-3-3, 4-4-2 e 3-5-2, tutorial em slides e placar separado de pênaltis
-- Banco ampliado para 415 jogadores reais, com 110 nomes conhecidos adicionados de Copas modernas
-- Prorrogação e disputa de pênaltis em empates, com estado compartilhado no modo Online
+- 1.247 versões de jogadores reais de 38 seleções.
+- Modos Solo, Multiplayer Local e Online por código de sala.
+- Dificuldades Fácil, Médio, Difícil e Lendário.
+- Formações 4-3-3, 4-4-2 e 3-5-2 com posicionamento próprio no campo.
+- Draft com raridades, posições bloqueadas, rerolls e proteção para completar as 11 vagas.
+- Química de equipe, capitão, bônus por lendas e influência histórica dos treinadores.
+- Pré-jogo com escalações, chance de vitória e formações independentes.
+- Simulação de 90 segundos com campo animado, logs, eventos, lesões e decisões rápidas.
+- Prorrogação e disputa de pênaltis interativa.
+- Pesquisa de jogadores por nome, seleção e edição da Copa.
+- Interface responsiva para desktop e dispositivos móveis.
+
+## Tecnologias
+
+- HTML5
+- CSS3
+- JavaScript ES Modules
+- Vite
+- Cloudflare D1/Worker para as salas online na configuração original
 
 ## Executar localmente
 
-1. Instale o Node.js 20 ou superior.
-2. Execute `npm install`.
-3. Execute `npm run dev`.
-4. Abra o endereço exibido no terminal.
+Requer Node.js 20 ou superior.
+
+```bash
+npm install
+npm run dev
+```
+
+Abra o endereço exibido no terminal.
+
+## Build de produção
+
+```bash
+npm run build
+```
+
+Os arquivos finais serão gerados na pasta `dist`.
 
 ## Testes
 
-Execute `npm test` para validar 5.000 sorteios estatísticos, equilíbrio de raridades, país/ano, compatibilidade e drafts completos nas três formações.
+```bash
+npm test
+```
+
+A suíte valida 5.000 rodadas de draft, distribuição de raridades, compatibilidade de posições, proteção contra duplicações, formações, duração da partida e equilíbrio das dificuldades.
+
+## Observação sobre o modo Online
+
+As salas online utilizam persistência D1/Worker na configuração original do projeto. Em outra plataforma de hospedagem, essa camada precisa ser adaptada ou conectada a um serviço de banco compatível.
+
+## Autor
+
+Criado por Eddy.

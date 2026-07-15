@@ -51,9 +51,13 @@ const modernSquads = [
 const modernPlayers=modernSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall})));
 const countryCode = {'Brasil':'bra','Argentina':'arg','Alemanha':'ger','França':'fra','Itália':'ita','Espanha':'esp','Tchéquia':'cze','País de Gales':'wal','Inglaterra':'eng','Portugal':'por','Croácia':'cro','Bélgica':'bel','Holanda':'ned'};
 const slug = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const canonicalAliases={'lionel-messi':'Messi','neymar-neymar-jr':'Neymar','neymar-jr':'Neymar','neymar-junior':'Neymar','cristiano-cristiano-ronaldo':'Cristiano Ronaldo'};
+const canonicalName=value=>{const words=value.trim().split(/\s+/),normalized=words.map(slug);if(words.length>1&&normalized[0]===normalized[1])words.splice(1,1);const cleaned=words.join(' ');return canonicalAliases[slug(cleaned)]||cleaned};
 const allSquads=[...squads,...additionalSquads];
-const rawPlayers=[...allSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...depth,...modernPlayers,...WORLD_CUP_2026_PLAYERS];
+const rawPlayers=[...allSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...depth,...modernPlayers,...WORLD_CUP_2026_PLAYERS].map(player=>({...player,name:canonicalName(player.name)}));
 const baseIds=rawPlayers.map(player=>`${countryCode[player.country]||slug(player.country).slice(0,3)}-${player.year}-${slug(player.name)}`);
 const idOccurrences=new Map();
 export const PLAYERS = rawPlayers.map((player,index)=>{const base=baseIds.filter(id=>id===baseIds[index]).length>1?`${baseIds[index]}-${player.position.toLowerCase()}`:baseIds[index],occurrence=(idOccurrences.get(base)||0)+1;idOccurrences.set(base,occurrence);return{id:occurrence>1?`${base}-${occurrence}`:base,...player}});
+const ACHIEVEMENTS={'2002-kahn':'Bola de Ouro FIFA • vice-campeão','2006-zidane':'Bola de Ouro FIFA • vice-campeão','2010-forlan':'Bola de Ouro FIFA • semifinalista','2014-messi':'Bola de Ouro FIFA • vice-campeão','2018-modric':'Bola de Ouro FIFA • vice-campeão','2018-mbappe':'Melhor jovem FIFA • campeão','2022-messi':'Bola de Ouro FIFA • campeão','2022-enzo-fernandez':'Melhor jovem FIFA • campeão','2022-emiliano-martinez':'Luva de Ouro FIFA • campeão'};
+export const achievementOf=player=>ACHIEVEMENTS[`${player.year}-${slug(player.name)}`]||'';
 export const TOURNAMENTS = [...allSquads.map(([country,year])=>({country,year})),...modernSquads.map(([country,year])=>({country,year})),...[...new Set(WORLD_CUP_2026_PLAYERS.map(player=>player.country))].map(country=>({country,year:2026}))];
