@@ -4,6 +4,7 @@ import { drawRound, findBestAvailableSlot, selectCard, completeDraft, autoDraft 
 import { makePlayer } from '../assets/js/state.js';
 import { PLAYERS } from '../assets/js/players.js';
 import { EXTRA_TIME_MS, MATCH_DURATION_MS, runMatch } from '../assets/js/simulator.js';
+import { chemistry, legendaryCount, winProbabilities } from '../assets/js/competitive.js';
 
 const stats={rounds:0,mixedCountries:0,mixedYears:0,multipleLegends:0,fourEpics:0,fourSamePosition:0,blockedCards:0,roundsWithoutUsableCard:0,duplicates:0,rarities:{common:0,rare:0,epic:0,legendary:0}};
 assert.equal(MATCH_DURATION_MS,90000);assert.equal(EXTRA_TIME_MS,10000);stats.matchDuration=MATCH_DURATION_MS;
@@ -34,4 +35,5 @@ let endgameChecks=0;for(const [formation,slots] of Object.entries(FORMATIONS))fo
 stats.consecutiveCountryRepeats=consecutiveCountryRepeats;stats.totalPlayers=PLAYERS.length;
 stats.endgameChecks=endgameChecks;
 const simulationTeamA=autoDraft('4-3-3'),simulationTeamB=autoDraft('4-4-2'),simulation=await runMatch({home:simulationTeamA,away:simulationTeamB,seed:'test-match',durationMs:120,extraTimeMs:80,onDecision:async event=>({value:event.type==='tactic'?'balanced':'center',batterId:event.candidates?.[0]?.id})});assert.equal(simulation.finished,true);assert.ok(simulation.logs.length>=3);assert.ok(simulation.stats.home.possession+simulation.stats.away.possession===100);stats.simulationFinished=simulation.finished;
+const competitiveHome={team:simulationTeamA,coach:'Scaloni',captainId:simulationTeamA[0].id,strategy:'attack'},competitiveAway={team:simulationTeamB,coach:'Felipão',captainId:simulationTeamB[0].id,strategy:'balanced'},odds=winProbabilities(competitiveHome,competitiveAway);assert.ok(chemistry(simulationTeamA)>=0&&chemistry(simulationTeamA)<=100);assert.ok(legendaryCount(simulationTeamA)>=0);assert.equal(odds.home+odds.away,100);stats.competitiveOdds=odds;
 console.log(JSON.stringify(stats,null,2));

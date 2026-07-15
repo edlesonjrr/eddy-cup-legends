@@ -15,6 +15,8 @@ Jogo web em HTML, CSS e JavaScript Vanilla. Abra `index.html` para jogar localme
 - Modo de conclusão que oferece somente cartas compatíveis nas duas últimas vagas
 - Cronômetro de 2 minutos para montar a equipe nos modos Solo, multiplayer local e Online
 - Simulação ao vivo de 90 segundos com campo animado, logs em tempo real, momentum, estatísticas, pênaltis interativos e decisão tática no intervalo
+- Camada competitiva com capitão, química 0–100, bônus de +2% por lenda, índice histórico dos treinadores e probabilidade de vitória dos dois lados
+- Estratégias pré-jogo, decisão rápida durante a partida, revanche e formato opcional de melhor de três
 - Prorrogação e disputa de pênaltis em empates, com estado compartilhado no modo Online
 
 ## Executar localmente
