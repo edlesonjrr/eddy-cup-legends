@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { FORMATIONS, RARITY_MODELS, rarityOf } from '../assets/js/config.js';
-import { drawRound, findBestAvailableSlot, selectCard, autoDraft } from '../assets/js/draft-engine.js';
+import { drawRound, findBestAvailableSlot, selectCard, completeDraft, autoDraft } from '../assets/js/draft-engine.js';
 import { makePlayer } from '../assets/js/state.js';
 import { PLAYERS } from '../assets/js/players.js';
 
@@ -28,5 +28,7 @@ assert.equal(PLAYERS.find(player=>player.overall===105)?.name,'Pelé');
 for(const player of PLAYERS)assert.deepEqual(Object.keys(player).sort(),['country','id','name','overall','position','year']);
 const local1=makePlayer('player1'),local2=makePlayer('player2');local1.formation='4-3-3';local2.formation='4-4-2';local1.rerolls--;local1.selectedPlayerIds.add('teste');assert.equal(local2.rerolls,3);assert.equal(local2.selectedPlayerIds.size,0);assert.notEqual(local1.lineup,local2.lineup);
 const varietyPlayer=makePlayer('variety');varietyPlayer.formation='4-3-3';let previousCountry='',consecutiveCountryRepeats=0;for(let i=0;i<100;i++){const round=drawRound(varietyPlayer);if(round.country===previousCountry)consecutiveCountryRepeats++;previousCountry=round.country}assert.equal(consecutiveCountryRepeats,0,'país repetido em sorteios consecutivos');
+let endgameChecks=0;for(const [formation,slots] of Object.entries(FORMATIONS))for(let emptyIndex=0;emptyIndex<slots.length;emptyIndex++){const p=makePlayer(`endgame-${formation}-${emptyIndex}`);p.formation=formation;p.lineup=p.lineup.map((_,index)=>index===emptyIndex?null:{id:`dummy-${index}`,name:'Preenchido',country:'Teste',year:2000,position:slots[index],overall:70});p.currentRound=10;const round=drawRound(p);assert.ok(round.cards.length>=1&&round.cards.length<=4);assert.ok(round.cards.every(card=>findBestAvailableSlot(card,p)>=0),'carta bloqueada no modo de conclusão');completeDraft(p);assert.equal(p.lineup.filter(Boolean).length,11);endgameChecks++}
 stats.consecutiveCountryRepeats=consecutiveCountryRepeats;stats.totalPlayers=PLAYERS.length;
+stats.endgameChecks=endgameChecks;
 console.log(JSON.stringify(stats,null,2));
