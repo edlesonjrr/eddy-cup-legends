@@ -1,6 +1,6 @@
 import { MAX_REROLLS } from './config.js';
 export const makePlayer = id => {
-  const player={id,formation:null,lineup:Array(11).fill(null),rerolls:MAX_REROLLS,currentRound:0,currentOptions:null,selectedPlayerIds:new Set(),offeredPlayerIds:new Set(),recentlyOfferedPlayerIds:[],recentCountries:[],recentTournamentKeys:[],lastOfferRound:-1,draftDeadline:0,coach:'',finishedDraft:false};
+  const player={id,side:'home',formation:null,lineup:Array(11).fill(null),rerolls:MAX_REROLLS,currentRound:0,currentOptions:null,selectedPlayerIds:new Set(),offeredPlayerIds:new Set(),recentlyOfferedPlayerIds:[],recentCountries:[],recentTournamentKeys:[],lastOfferRound:-1,draftDeadline:0,coach:'',finishedDraft:false};
   Object.defineProperties(player,{team:{get:()=>player.lineup},round:{get:()=>player.currentRound,set:v=>player.currentRound=v},current:{get:()=>player.currentOptions,set:v=>player.currentOptions=v}});
   return player;
 };
