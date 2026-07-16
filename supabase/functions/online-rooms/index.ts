@@ -1,15 +1,22 @@
 import { createClient } from "npm:@supabase/supabase-js@2.90.1";
 
-const cors={"access-control-allow-origin":"*","access-control-allow-headers":"apikey, content-type, x-room-token","access-control-allow-methods":"GET, POST, PUT, OPTIONS","content-type":"application/json"};
-const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:cors});
+const allowedOrigins=new Set(["https://eddy-cup-legends.vercel.app"]);
+const baseCors={"access-control-allow-headers":"apikey, content-type, x-room-token","access-control-allow-methods":"GET, POST, PUT, OPTIONS","vary":"origin","content-type":"application/json"};
 const hash=async(value:string)=>{const bytes=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));return Array.from(new Uint8Array(bytes),byte=>byte.toString(16).padStart(2,"0")).join("")};
 const token=()=>crypto.randomUUID().replaceAll("-","")+crypto.randomUUID().replaceAll("-","");
 const roomCode=()=>{const alphabet="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",bytes=crypto.getRandomValues(new Uint8Array(6));return Array.from(bytes,value=>alphabet[value%alphabet.length]).join("")};
 const cleanState=(body:any)=>({side:body?.side==="away"?"away":"home",formation:typeof body?.formation==="string"?body.formation:null,lineupIds:Array.isArray(body?.lineupIds)?body.lineupIds.slice(0,11).map(String):[],progress:Math.min(11,Math.max(0,Number(body?.progress)||0)),coach:String(body?.coach||"").slice(0,60),captainId:String(body?.captainId||"").slice(0,80),strategy:["attack","balanced","defend","counter"].includes(body?.strategy)?body.strategy:"balanced",finished:Boolean(body?.finished)});
+const cleanJson=(value:unknown,depth=0):unknown=>{if(depth>6)return null;if(typeof value==="string")return value.slice(0,500).replace(/[<>&"']/g,"");if(typeof value==="number")return Number.isFinite(value)?value:0;if(typeof value==="boolean"||value===null)return value;if(Array.isArray(value))return value.slice(0,100).map(item=>cleanJson(item,depth+1));if(typeof value==="object"){const output:Record<string,unknown>={};for(const [key,item] of Object.entries(value as Record<string,unknown>).slice(0,60)){if(key!=="__proto__"&&key!=="constructor"&&key!=="prototype")output[key]=cleanJson(item,depth+1)}return output}return null};
 
 Deno.serve(async req=>{
+  const origin=req.headers.get("origin");
+  const cors={...baseCors,"access-control-allow-origin":origin||"https://eddy-cup-legends.vercel.app"};
+  const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:cors});
+  const localOrigin=Boolean(origin&&/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin));
+  if(origin&&!allowedOrigins.has(origin)&&!localOrigin)return json({error:"Origem não autorizada."},403);
   if(req.method==="OPTIONS")return new Response(null,{status:204,headers:cors});
   try{
+    if(Number(req.headers.get("content-length")||0)>65536)return json({error:"Requisição muito grande."},413);
     const publishableRaw=Deno.env.get("SUPABASE_PUBLISHABLE_KEYS"),publishable=publishableRaw?Object.values(JSON.parse(publishableRaw)):[] as string[],legacy=Deno.env.get("SUPABASE_ANON_KEY");
     if(legacy)publishable.push(legacy);
     if(publishable.length&&!publishable.includes(req.headers.get("apikey")||""))return json({error:"Aplicativo não autorizado."},401);
@@ -17,8 +24,11 @@ Deno.serve(async req=>{
 
     if(req.method==="POST"&&relative==="/api/rooms"){
       await db.from("rooms").delete().lt("expires_at",now.toISOString());
+      const {count,error:countError}=await db.from("rooms").select("code",{count:"exact",head:true});
+      if(countError)throw countError;
+      if((count||0)>=25)return json({error:"Limite temporário de salas atingido. Tente novamente mais tarde."},429);
       for(let attempt=0;attempt<6;attempt++){
-        const code=roomCode(),hostToken=token(),hostHash=await hash(hostToken),{error}=await db.from("rooms").insert({code,host_token_hash:hostHash});
+        const code=roomCode(),hostToken=token(),hostHash=await hash(hostToken),expiresAt=new Date(now.getTime()+30*60*1000).toISOString(),{error}=await db.from("rooms").insert({code,host_token_hash:hostHash,expires_at:expiresAt});
         if(error?.code==="23505")continue;
         if(error)throw error;
         return json({code,token:hostToken,role:"host"});
@@ -50,14 +60,19 @@ Deno.serve(async req=>{
     }
     if(req.method==="PUT"&&parts[3]==="match"){
       if(role!=="host")return json({error:"Somente o criador controla a partida."},403);
-      const body=await req.json(),{error}=await db.from("rooms").update({match_state:body,status:body?.finished?"finished":"playing",updated_at:now.toISOString()}).eq("code",code);
+      const body=cleanJson(await req.json()) as any,{error}=await db.from("rooms").update({match_state:body,status:body?.finished?"finished":"playing",updated_at:now.toISOString()}).eq("code",code);
       if(error)throw error;return json({ok:true});
     }
     if(req.method==="PUT"&&parts[3]==="decision"){
-      const body=await req.json(),field=role==="host"?"host_decision":"guest_decision",{error}=await db.from("rooms").update({[field]:body,updated_at:now.toISOString()}).eq("code",code);
+      const body=cleanJson(await req.json()),field=role==="host"?"host_decision":"guest_decision",{error}=await db.from("rooms").update({[field]:body,updated_at:now.toISOString()}).eq("code",code);
       if(error)throw error;return json({ok:true});
     }
     if(req.method==="PUT"&&parts[3]==="leave"){
+      if(role==="host"){
+        const {error}=await db.from("rooms").delete().eq("code",code);
+        if(error)throw error;
+        return json({ok:true,deleted:true,reason:"host_left"});
+      }
       const field=role==="host"?"host_left":"guest_left",{data,error}=await db.from("rooms").update({[field]:true,updated_at:now.toISOString()}).eq("code",code).select("status,host_left,guest_left").single();
       if(error)throw error;
       if(data.status==="finished"&&data.host_left&&data.guest_left){
