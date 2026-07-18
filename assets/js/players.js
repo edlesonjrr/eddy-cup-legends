@@ -39,25 +39,35 @@ const depth = [
 const modernSquads = [
  ['Brasil',2006,[['Dida','GK',91],['Cafu','RB',94],['Lúcio','CB',94],['Juan','CB',88],['Roberto Carlos','LB',96],['Gilberto Silva','CDM',90],['Kaká','CAM',96],['Ronaldinho','LW',99],['Adriano','ST',94],['Ronaldo','ST',98],['Robinho','RW',88]]],
  ['Brasil',2018,[['Alisson','GK',92],['Fagner','RB',82],['Thiago Silva','CB',94],['Miranda','CB',89],['Marcelo','LB',94],['Casemiro','CDM',94],['Paulinho','CM',87],['Coutinho','CAM',92],['Willian','RW',87],['Neymar','LW',97],['Gabriel Jesus','ST',87]]],
- ['Argentina',2014,[['Sergio Romero','GK',89],['Zabaleta','RB',88],['Garay','CB',89],['Demichelis','CB',85],['Rojo','LB',86],['Mascherano','CDM',94],['Biglia','CM',85],['Di María','RW',94],['Messi','CF',102],['Higuaín','ST',92],['Agüero','ST',93]]],
+ ['Argentina',2014,[['Sergio Romero','GK',89],['Zabaleta','RB',88],['Garay','CB',89],['Demichelis','CB',85],['Rojo','LB',86],['Mascherano','CDM',94],['Biglia','CM',85],['Di María','RW',94],['Messi','CF',103],['Higuaín','ST',92],['Agüero','ST',93]]],
  ['Alemanha',2006,[['Lehmann','GK',91],['Friedrich','RB',85],['Mertesacker','CB',88],['Metzelder','CB',86],['Lahm','LB',94],['Frings','CDM',89],['Ballack','CM',96],['Schweinsteiger','LM',89],['Schneider','RM',87],['Klose','ST',96],['Podolski','ST',91]]],
  ['França',2022,[['Lloris','GK',91],['Koundé','RB',88],['Varane','CB',93],['Upamecano','CB',89],['Theo Hernández','LB',92],['Tchouaméni','CDM',90],['Rabiot','CM',87],['Griezmann','CAM',95],['Dembélé','RW',90],['Mbappé','LW',101],['Giroud','ST',92]]],
  ['Croácia',2018,[['Subašić','GK',90],['Vrsaljko','RB',87],['Lovren','CB',88],['Vida','CB',86],['Strinić','LB',81],['Brozović','CDM',90],['Rakitić','CM',94],['Modrić','CAM',99],['Rebić','RW',87],['Perišić','LW',92],['Mandžukić','ST',92]]],
  ['Bélgica',2018,[['Courtois','GK',95],['Alderweireld','CB',90],['Kompany','CB',92],['Vertonghen','CB',89],['Meunier','RM',86],['Witsel','CDM',88],['De Bruyne','CAM',98],['Carrasco','LM',87],['Hazard','LW',97],['Mertens','CF',91],['Lukaku','ST',94]]],
- ['Portugal',2022,[['Diogo Costa','GK',88],['João Cancelo','RB',92],['Rúben Dias','CB',94],['Pepe','CB',91],['Raphaël Guerreiro','LB',88],['Palhinha','CDM',88],['Bruno Fernandes','CAM',95],['Bernardo Silva','RW',94],['João Félix','CF',89],['Rafael Leão','LW',92],['Cristiano Ronaldo','ST',99]]],
+ ['Portugal',2022,[['Diogo Costa','GK',88],['João Cancelo','RB',92],['Rúben Dias','CB',94],['Pepe','CB',91],['Raphaël Guerreiro','LB',88],['Palhinha','CDM',88],['Bruno Fernandes','CAM',95],['Bernardo Silva','RW',94],['João Félix','CF',89],['Rafael Leão','LW',92],['Cristiano Ronaldo','ST',91]]],
  ['Inglaterra',2022,[['Pickford','GK',89],['Walker','RB',91],['Stones','CB',90],['Maguire','CB',86],['Shaw','LB',88],['Rice','CDM',91],['Bellingham','CM',94],['Foden','CAM',93],['Saka','RW',94],['Rashford','LW',91],['Kane','ST',97]]],
  ['Holanda',2022,[['Noppert','GK',85],['Dumfries','RB',91],['Van Dijk','CB',96],['De Ligt','CB',91],['Aké','LB',89],['De Jong','CM',94],['Koopmeiners','CM',87],['Gakpo','LW',91],['Bergwijn','RW',87],['Depay','CF',91],['Weghorst','ST',85]]]
 ];
 const modernPlayers=modernSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall})));
+const starWorldCupCards=[
+ {name:'Messi',country:'Argentina',year:2006,position:'RW',overall:89},
+ {name:'Messi',country:'Argentina',year:2010,position:'RW',overall:96},
+ {name:'Messi',country:'Argentina',year:2018,position:'RW',overall:97},
+ {name:'Cristiano Ronaldo',country:'Portugal',year:2006,position:'RW',overall:92},
+ {name:'Cristiano Ronaldo',country:'Portugal',year:2010,position:'LW',overall:96},
+ {name:'Cristiano Ronaldo',country:'Portugal',year:2014,position:'LW',overall:102},
+ {name:'Cristiano Ronaldo',country:'Portugal',year:2018,position:'ST',overall:103}
+];
 const countryCode = {'Brasil':'bra','Argentina':'arg','Alemanha':'ger','França':'fra','Itália':'ita','Espanha':'esp','Tchéquia':'cze','País de Gales':'wal','Inglaterra':'eng','Portugal':'por','Croácia':'cro','Bélgica':'bel','Holanda':'ned'};
 const slug = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const canonicalAliases={'lionel-messi':'Messi','neymar-neymar-jr':'Neymar','neymar-jr':'Neymar','neymar-junior':'Neymar','cristiano-cristiano-ronaldo':'Cristiano Ronaldo'};
 const canonicalName=value=>{const words=value.trim().split(/\s+/),normalized=words.map(slug);if(words.length>1&&normalized[0]===normalized[1])words.splice(1,1);const cleaned=words.join(' ');return canonicalAliases[slug(cleaned)]||cleaned};
 const allSquads=[...squads,...additionalSquads];
-const rawPlayers=[...allSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...depth,...modernPlayers,...WORLD_CUP_2026_PLAYERS].map(player=>({...player,name:canonicalName(player.name)}));
+const starOverallOverrides={'Argentina|2026|Messi':95,'Portugal|2026|Cristiano Ronaldo':96};
+const rawPlayers=[...allSquads.flatMap(([country,year,list])=>list.map(([name,position,overall])=>({name,country,year,position,overall}))),...depth,...modernPlayers,...starWorldCupCards,...WORLD_CUP_2026_PLAYERS].map(player=>{const name=canonicalName(player.name),key=`${player.country}|${player.year}|${name}`;return{...player,name,overall:starOverallOverrides[key]??player.overall}});
 const baseIds=rawPlayers.map(player=>`${countryCode[player.country]||slug(player.country).slice(0,3)}-${player.year}-${slug(player.name)}`);
 const idOccurrences=new Map();
 export const PLAYERS = rawPlayers.map((player,index)=>{const base=baseIds.filter(id=>id===baseIds[index]).length>1?`${baseIds[index]}-${player.position.toLowerCase()}`:baseIds[index],occurrence=(idOccurrences.get(base)||0)+1;idOccurrences.set(base,occurrence);return{id:occurrence>1?`${base}-${occurrence}`:base,...player}});
-const ACHIEVEMENTS={'2002-kahn':'Bola de Ouro FIFA • vice-campeão','2006-zidane':'Bola de Ouro FIFA • vice-campeão','2010-forlan':'Bola de Ouro FIFA • semifinalista','2014-messi':'Bola de Ouro FIFA • vice-campeão','2018-modric':'Bola de Ouro FIFA • vice-campeão','2018-mbappe':'Melhor jovem FIFA • campeão','2022-messi':'Bola de Ouro FIFA • campeão','2022-enzo-fernandez':'Melhor jovem FIFA • campeão','2022-emiliano-martinez':'Luva de Ouro FIFA • campeão'};
+const ACHIEVEMENTS={'2002-kahn':'Bola de Ouro FIFA • vice-campeão','2006-zidane':'Bola de Ouro FIFA • vice-campeão','2010-forlan':'Bola de Ouro FIFA • semifinalista','2006-messi':'Estreia em Copas • quartas de final','2010-messi':'Quartas de final','2014-messi':'Bola de Ouro da Copa • vice-campeão','2018-messi':'Oitavas de final','2022-messi':'Bola de Ouro da Copa • campeão','2006-cristiano-ronaldo':'4º lugar • 1 gol','2010-cristiano-ronaldo':'Oitavas de final • 1 gol','2014-cristiano-ronaldo':'Bola de Ouro mundial do ano • 1 gol','2018-cristiano-ronaldo':'4 gols • oitavas de final','2022-cristiano-ronaldo':'Quartas de final • recorde em 5 Copas','2018-modric':'Bola de Ouro FIFA • vice-campeão','2018-mbappe':'Melhor jovem FIFA • campeão','2022-enzo-fernandez':'Melhor jovem FIFA • campeão','2022-emiliano-martinez':'Luva de Ouro FIFA • campeão'};
 export const achievementOf=player=>ACHIEVEMENTS[`${player.year}-${slug(player.name)}`]||'';
 export const TOURNAMENTS = [...allSquads.map(([country,year])=>({country,year})),...modernSquads.map(([country,year])=>({country,year})),...[...new Set(WORLD_CUP_2026_PLAYERS.map(player=>player.country))].map(country=>({country,year:2026}))];
