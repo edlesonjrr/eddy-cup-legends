@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict';
-import { FORMATIONS, FORMATION_COORDS, RARITY_MODELS, rarityOf } from '../assets/js/config.js';
+import { FORMATIONS, FORMATION_COORDS, RARITY_MODELS, DRAFT_TIMER_MS, CARD_STAGGER_MS, rarityOf } from '../assets/js/config.js';
 import { drawRound, findBestAvailableSlot, selectCard, completeDraft, autoDraft, autoDraftByDifficulty } from '../assets/js/draft-engine.js';
 import { makePlayer } from '../assets/js/state.js';
 import { PLAYERS } from '../assets/js/players.js';
 import { EXTRA_TIME_MS, MATCH_DURATION_MS, runMatch } from '../assets/js/simulator.js';
 import { chemistry, legendaryCount, winProbabilities } from '../assets/js/competitive.js';
+import { TOURNAMENT_CLUBS } from '../assets/js/tournament.js';
 
 const stats={rounds:0,mixedCountries:0,mixedYears:0,multipleLegends:0,fourEpics:0,fourSamePosition:0,blockedCards:0,roundsWithoutUsableCard:0,duplicates:0,rarities:{common:0,rare:0,epic:0,legendary:0}};
-assert.equal(MATCH_DURATION_MS,90000);assert.equal(EXTRA_TIME_MS,10000);stats.matchDuration=MATCH_DURATION_MS;
+assert.equal(MATCH_DURATION_MS,90000);assert.equal(EXTRA_TIME_MS,10000);assert.equal(DRAFT_TIMER_MS,180000);assert.ok(CARD_STAGGER_MS>=300);stats.matchDuration=MATCH_DURATION_MS;stats.draftDuration=DRAFT_TIMER_MS;
+assert.equal(TOURNAMENT_CLUBS.length,50);assert.equal(new Set(TOURNAMENT_CLUBS).size,50);stats.tournamentClubs=TOURNAMENT_CLUBS.length;
 assert.notDeepEqual(FORMATION_COORDS['4-3-3'],FORMATION_COORDS['4-4-2']);assert.notDeepEqual(FORMATION_COORDS['4-4-2'],FORMATION_COORDS['3-5-2']);assert.ok(PLAYERS.length>=405);stats.formationMaps=Object.keys(FORMATION_COORDS).length;
 for(let i=0;i<5000;i++){
   const p=makePlayer(`stat-${i}`);p.formation=Object.keys(FORMATIONS)[i%3];
@@ -27,6 +29,9 @@ assert.equal(stats.mixedCountries,0);assert.equal(stats.mixedYears,0);assert.equ
 assert.ok(stats.rarities.common+stats.rarities.rare>stats.rarities.epic+stats.rarities.legendary,'comuns e raras não predominam');
 assert.equal(new Set(PLAYERS.map(player=>player.id)).size,PLAYERS.length,'IDs duplicados');
 assert.equal(new Set(PLAYERS.map(player=>`${player.country}|${player.year}|${player.name}`)).size,PLAYERS.length,'mesma pessoa duplicada na mesma Copa');
+const messiCards=PLAYERS.filter(player=>player.name==='Messi').sort((a,b)=>a.year-b.year),cristianoCards=PLAYERS.filter(player=>player.name==='Cristiano Ronaldo').sort((a,b)=>a.year-b.year);
+assert.deepEqual(messiCards.map(player=>player.year),[2006,2010,2014,2018,2022,2026]);assert.deepEqual(cristianoCards.map(player=>player.year),[2006,2010,2014,2018,2022,2026]);
+assert.equal(messiCards.find(player=>player.year===2014)?.overall,103);assert.equal(cristianoCards.find(player=>player.year===2014)?.overall,102);assert.equal(cristianoCards.find(player=>player.year===2022)?.overall,91);
 assert.equal(PLAYERS.filter(player=>player.overall===105).length,1,'deve existir somente um overall 105');
 assert.equal(PLAYERS.find(player=>player.overall===105)?.name,'Pelé');
 for(const player of PLAYERS)assert.deepEqual(Object.keys(player).sort(),['country','id','name','overall','position','year']);
@@ -36,6 +41,7 @@ let endgameChecks=0;for(const [formation,slots] of Object.entries(FORMATIONS))fo
 stats.consecutiveCountryRepeats=consecutiveCountryRepeats;stats.totalPlayers=PLAYERS.length;
 stats.endgameChecks=endgameChecks;
 const simulationTeamA=autoDraft('4-3-3'),simulationTeamB=autoDraft('4-4-2'),simulation=await runMatch({home:simulationTeamA,away:simulationTeamB,seed:'test-match',durationMs:120,extraTimeMs:80,onDecision:async event=>({value:event.type==='tactic'?'balanced':'center',batterId:event.candidates?.[0]?.id})});assert.equal(simulation.finished,true);assert.ok(simulation.logs.length>=3);assert.ok(simulation.stats.home.possession+simulation.stats.away.possession===100);stats.simulationFinished=simulation.finished;
+const duelEvents=[],duelSimulation=await runMatch({home:simulationTeamA,away:simulationTeamB,seed:'penalty-duel-test',durationMs:1,extraTimeMs:1,onDecision:async event=>{duelEvents.push({type:event.type,side:event.side,id:event.decisionId});if(event.type==='shootout-order')return{orderedIds:event.candidates.slice(0,5).map(card=>card.id)};return{value:'left',accuracy:1}}});assert.equal(duelSimulation.finished,true);assert.equal(duelEvents.filter(event=>event.type==='shootout-kick').length,10);assert.equal(duelEvents.filter(event=>event.type==='shootout-save').length,10);assert.equal(new Set(duelEvents.map(event=>event.id)).size,duelEvents.length,'cada decisão precisa de ID único');assert.ok(duelEvents.some(event=>event.type==='shootout-kick'&&event.side==='home'));assert.ok(duelEvents.some(event=>event.type==='shootout-save'&&event.side==='away'));stats.penaltyDuels=duelEvents.length;
 const competitiveHome={team:simulationTeamA,coach:'Scaloni',captainId:simulationTeamA[0].id,strategy:'attack'},competitiveAway={team:simulationTeamB,coach:'Felipão',captainId:simulationTeamB[0].id,strategy:'balanced'},odds=winProbabilities(competitiveHome,competitiveAway);assert.ok(chemistry(simulationTeamA)>=0&&chemistry(simulationTeamA)<=100);assert.ok(legendaryCount(simulationTeamA)>=0);assert.equal(odds.home+odds.away,100);stats.competitiveOdds=odds;
 const difficultyAverages={};for(const level of ['easy','medium','hard','legendary']){const teams=Array.from({length:40},()=>autoDraftByDifficulty('4-3-3',level)),cards=teams.flat();difficultyAverages[level]=cards.reduce((sum,card)=>sum+card.overall,0)/cards.length}assert.ok(difficultyAverages.easy<difficultyAverages.medium&&difficultyAverages.medium<difficultyAverages.hard&&difficultyAverages.hard<difficultyAverages.legendary);stats.difficultyAverages=difficultyAverages;
 console.log(JSON.stringify(stats,null,2));

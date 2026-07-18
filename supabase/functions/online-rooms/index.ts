@@ -43,7 +43,7 @@ Deno.serve(async req=>{
 
     if(req.method==="POST"&&parts[3]==="join"){
       if(room.guest_token_hash)return json({error:"A sala já possui dois jogadores."},409);
-      const guestToken=token(),guestHash=await hash(guestToken),deadline=new Date(now.getTime()+120000).toISOString(),{data,error}=await db.from("rooms").update({guest_token_hash:guestHash,status:"drafting",deadline,updated_at:now.toISOString()}).eq("code",code).is("guest_token_hash",null).select("code").maybeSingle();
+      const guestToken=token(),guestHash=await hash(guestToken),deadline=new Date(now.getTime()+180000).toISOString(),{data,error}=await db.from("rooms").update({guest_token_hash:guestHash,status:"drafting",deadline,updated_at:now.toISOString()}).eq("code",code).is("guest_token_hash",null).select("code").maybeSingle();
       if(error)throw error;
       if(!data)return json({error:"Outro jogador entrou primeiro."},409);
       return json({code,token:guestToken,role:"guest",deadline:new Date(deadline).getTime()});

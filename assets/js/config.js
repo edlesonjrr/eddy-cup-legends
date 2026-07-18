@@ -1,10 +1,10 @@
 export const MAX_REROLLS = 3;
-export const CARD_STAGGER_MS = 230;
+export const CARD_STAGGER_MS = 360;
 export const DRAW_TICK_MS = 125;
 export const DRAW_COUNTRY_TICKS = 9;
 export const DRAW_YEAR_TICKS = 8;
 export const DRAW_SETTLE_MS = 450;
-export const DRAFT_TIMER_MS = 120000;
+export const DRAFT_TIMER_MS = 180000;
 export const POSITION_LABELS = {GK:'Goleiro',RB:'Lateral-direito',LB:'Lateral-esquerdo',CB:'Zagueiro',CDM:'Volante',CM:'Meio-campista',CAM:'Meia-atacante',RM:'Meia-direita',LM:'Meia-esquerda',RW:'Ponta-direita',LW:'Ponta-esquerda',CF:'Segundo atacante',ST:'Centroavante'};
 export const FORMATIONS = {'4-3-3':['GK','RB','CB','CB','LB','CM','CM','CAM','LW','ST','RW'],'4-4-2':['GK','RB','CB','CB','LB','LM','CM','CM','RM','ST','ST'],'3-5-2':['GK','CB','CB','CB','LM','CM','CAM','CM','RM','ST','ST']};
 export const FORMATION_COORDS = {
