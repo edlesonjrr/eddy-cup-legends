@@ -10,7 +10,7 @@
     "report:database": "node scripts/database-report.mjs"
   },
   "devDependencies": {
-    "vite": "6.4.3"
+    "vite": "6.4.5"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.90.1"
